@@ -1,6 +1,7 @@
 package main
 
 import (
+	"encoding/json"
 	"fmt"
 	"github.com/genstackio/goly"
 	"net/url"
@@ -8,17 +9,18 @@ import (
 )
 
 func main() {
-	if len(os.Args) < 4 {
-		fmt.Println("Syntax: goly <vendorToken> <env> <action>")
+	if len(os.Args) < 5 {
+		fmt.Println("Syntax: goly <publicVendorToken> <privateVendorToken> <env> <action>")
 		os.Exit(1)
 	}
-	vendorToken := os.Args[1]
-	env := os.Args[2]
-	action := os.Args[3]
+	publicVendorToken := os.Args[1]
+	privateVendorToken := os.Args[2]
+	env := os.Args[3]
+	action := os.Args[4]
 	switch action {
 	case "create-request":
 		c := goly.Client{}
-		c.Init(vendorToken, env)
+		c.Init(publicVendorToken, privateVendorToken, env)
 		var data url.Values
 		r, err := c.CreateRequest(data)
 		if err != nil {
@@ -26,6 +28,28 @@ func main() {
 			os.Exit(4)
 		}
 		fmt.Println(r)
+	case "get-b2c-balance":
+		c := goly.Client{}
+		c.Init(publicVendorToken, privateVendorToken, env)
+		r, err := c.GetB2CBalance()
+		if err != nil {
+			fmt.Println("ERROR: " + err.Error())
+			os.Exit(5)
+		}
+		j, err := json.Marshal(*r)
+		if err != nil {
+			fmt.Println("ERROR: " + err.Error())
+			os.Exit(6)
+		}
+		fmt.Println(string(j))
+	case "test-credentials":
+		ok, err := goly.TestApiCredentials(publicVendorToken, privateVendorToken, env)
+
+		if !ok {
+			fmt.Println("NOK - Bad credentials:" + err.Error())
+			os.Exit(3)
+		}
+		fmt.Println("OK")
 	default:
 		fmt.Println("Error: unrecognized action '" + action + "'")
 		os.Exit(2)

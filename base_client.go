@@ -12,8 +12,9 @@ var envs = map[string]string{
 	"sandbox":    "https://homologation.lydia-app.com",
 }
 
-func (c *Client) Init(publicVendorToken string, env string) {
+func (c *Client) Init(publicVendorToken string, privateVendorToken string, env string) {
 	c.identity.PublicVendorToken = publicVendorToken
+	c.identity.PrivateVendorToken = privateVendorToken
 	c.env = env
 	endpoint, ok := envs[env]
 	if !ok {
