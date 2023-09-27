@@ -8,8 +8,8 @@ import (
 )
 
 var envs = map[string]string{
-	"production": "https://lydia-app.com",
-	"sandbox":    "https://homologation.lydia-app.com",
+	"production":   "https://lydia-app.com",
+	"homologation": "https://homologation.lydia-app.com",
 }
 
 func (c *Client) Init(publicVendorToken string, privateVendorToken string, env string) {
