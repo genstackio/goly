@@ -49,6 +49,17 @@ func (c *Client) GetRequestStateByOrderRef(orderRef string) (*RequestState, erro
 	}
 	return &res, nil
 }
+func (c *Client) GetRequestStateByRequestUuid(requestUuid string) (*RequestState, error) {
+	var res RequestState
+	var re = url.Values{}
+	re.Set("request_uuid", requestUuid)
+	re.Set("vendor_token", c.identity.PublicVendorToken)
+	err := c.request("/request/state.json", re, &res)
+	if err != nil {
+		return nil, err
+	}
+	return &res, nil
+}
 func (c *Client) BuildSignature(data *map[string]string) (string, error) {
 	if len(c.identity.PrivateVendorToken) == 0 {
 		return "", errors.New("no private vendor token specified")
